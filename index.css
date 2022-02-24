@@ -1,0 +1,23 @@
+:root {
+    --color1: #000000;
+    --color2: #FFF;
+}
+
+.container {
+    border: solid;
+    border-radius: 10px;
+    border-color: var(--color1);
+    padding: 20px;
+    max-width: 300px;
+    margin: 10vh 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.box {
+    background-color: var(--color2);
+}
+
+.text {
+    color: var(--color1);
+}
