@@ -104,6 +104,16 @@ function inOrder(tree) {
     }
 }
 
+// draws a binary tree of the huffman encoding
+function drawTree(canvas) {
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    ctx.fillStyle = 'rgb(0, 0, 0)';
+    ctx.fillRect(0, 0, width, height);
+    return canvas;
+}
+
 // converts a list into a nice string to output
 function listToString(list) {
     let len = list.length;
@@ -138,10 +148,15 @@ function computeHC() {
     // constructing huffman tree
     freqList = freqList.sort((a, b) => a.freq - b.freq);
     tree = makeTree(freqList);
-
     inOrder(tree);
+    canvasElements = "yup";
 
     // constructing output
     out = freqList;
-    hc.innerHTML = `<h3>The corresponding Huffman Coding is: ${out}</h3>`;
+    let innerHTML = document.createElement('h3');
+    let canvas = document.createElement('canvas');
+    innerHTML.innerHTML = `<h3>The corresponding Huffman Coding is:</h3>`;
+   canvas =  drawTree(canvas);
+    hc.appendChild(innerHTML);
+    hc.appendChild(canvas);
 }
