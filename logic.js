@@ -117,7 +117,6 @@ function listToString(list) {
 
 // called by html button, computes and outputs huffman encoding
 function computeHC() {
-    console.log("computeHC");
     // get input from list1, list2
     let chars = document.getElementById("chars").value;
 
@@ -127,10 +126,17 @@ function computeHC() {
         return; 
     }
 
+    console.log(chars.split('').sort());
+
     // getting frequencies of each character
     freqList = countFreq(chars);
+    for (let i = 0; i < freqList.length; ++i) {
+        console.log(freqList[i].freq + " | " + freqList[i].char);
+    }
+    console.log("end");
 
     // constructing huffman tree
+    freqList = freqList.sort((a, b) => a.freq - b.freq);
     tree = makeTree(freqList);
 
     inOrder(tree);
