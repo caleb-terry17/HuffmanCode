@@ -70,28 +70,40 @@ function makeTree(list) {
 }
 
 // given a file, reads in and counts the frequencies of each character
-function countFreq(fileName) {
+function countFreq(input) {
     let freqList;
-    readFile(fileName, 'utf-8', (err, file) => {
-        if (err) { throw err; }  // check for error
-        file = file.toString().sort();
+    // readFile(fileName, 'utf-8', (err, file) => {
+        // if (err) { throw err; }  // check for error
+        // file = file.toString().sort();
+        input = input.split('').sort();
         // check for 0 length file
-        if (file.length == 0) { return []; }
+        if (input.length == 0) { return []; }
         // read file data and count frequencies
-        freqList = [new Char(file[0], 1)];
+        freqList = [new Char(input[0], 1)];
         let idx = 0;
-        for (let i = 1; i < file.length; ++i) {
+        for (let i = 1; i < input.length; ++i) {
             // see if character has already been added
-            if (file[i] == file[i - 1]) { freqList[idx]++; }
-            else { freqList[++idx] = new Char(file[i], 1); }
+            if (input[i] == input[i - 1]) { freqList[idx].freq++; }
+            else { freqList[++idx] = new Char(input[i], 1); }
         }
-    });
+    // });
     return freqList;
 }
 
 ///////////////////
 // i/o
 ///////////////////
+// inorder traversal of a binary tree
+function inOrder(tree) {
+    if (tree.char === undefined) {
+        inOrder(tree.left);
+        console.log("freq: " + tree.freq);
+        inOrder(tree.right);
+    } else {
+        console.log("freq: " + tree.freq + " | " + tree.char);
+    }
+}
+
 // converts a list into a nice string to output
 function listToString(list) {
     let len = list.length;
@@ -115,11 +127,15 @@ function computeHC() {
         return; 
     }
 
-    // sorting set
-    chars = chars.split('');
-    chars = chars.sort();
+    // getting frequencies of each character
+    freqList = countFreq(chars);
+
+    // constructing huffman tree
+    tree = makeTree(freqList);
+
+    inOrder(tree);
 
     // constructing output
-    out = chars;
+    out = freqList;
     hc.innerHTML = `<h3>The corresponding Huffman Coding is: ${out}</h3>`;
 }
