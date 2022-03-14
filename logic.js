@@ -116,16 +116,6 @@ function inOrder(tree) {
 
 // draws a binary tree of the huffman encoding
 function drawTree(canvas, tree) {
-    const drawContainer = document.getElementById("drawContainer");
-    // to manipulate the canvas
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;  // = drawContainer.width - 200;
-    const height = canvas.height;
-
-    // rectangular outline to house the binary tree
-    // ctx.fillStyle = 'rgb(0, 0, 0)';
-    // ctx.strokeRect(0, 0, width, height);
-
     // running breadth first search to get nodes
     let node = tree;  // current node in the tree
     let queue = [node];
@@ -134,26 +124,26 @@ function drawTree(canvas, tree) {
     for (let level = 0; level < depth; ++level) {
         // need to run through 2^level nodes
         let numNodes = Math.pow(2, level);
-        let currLevel = "";
+        let currLevel = document.createElement('h4');
         for (let levelNum = 0; levelNum < numNodes; ++levelNum) {
             // pop node, output it and push child nodes
             node = queue.shift();
             // if node is null, push two nulls
             if (node === null) {
-                currLevel += ("null ");
+                currLevel.innerHTML += ("null ");
                 queue.push(null);
                 queue.push(null);
             } else if(node.char === undefined) {  // actual node, output and push children
-                currLevel += (node.freq + " ");
+                currLevel.innerHTML += (node.freq + " ");
                 queue.push(node.left);
                 queue.push(node.right);
             } else {  // char, output and push nulls
-                currLevel += (node.freq + "(" + node.char + ") ");
+                currLevel.innerHTML += (node.freq + "(" + node.char + ") ");
                 queue.push(null);
                 queue.push(null);
             }
         }
-        console.log(currLevel);
+        canvas.appendChild(currLevel);
     }
     return canvas;
 }
@@ -198,7 +188,7 @@ function computeHC() {
     // constructing output
     out = freqList;
     let innerHTML = document.createElement('h3');
-    let canvas = document.createElement('canvas');
+    let canvas = document.createElement('div');
     innerHTML.innerHTML = `<h3>The corresponding Huffman Coding is:</h3>`;
     canvas =  drawTree(canvas, tree);
     hc.appendChild(innerHTML);
