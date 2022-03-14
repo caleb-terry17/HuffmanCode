@@ -120,7 +120,6 @@ function drawTree(canvas, tree) {
     let node = tree;  // current node in the tree
     let queue = [node];
     let depth = getDepth(tree);  // depth of tree
-    console.log("depth: " + depth);
     for (let level = 0; level < depth; ++level) {
         // need to run through 2^level nodes
         let numNodes = Math.pow(2, level);
@@ -170,20 +169,12 @@ function computeHC() {
         return; 
     }
 
-    console.log(chars.split('').sort());
-
     // getting frequencies of each character
     freqList = countFreq(chars);
-    for (let i = 0; i < freqList.length; ++i) {
-        console.log(freqList[i].freq + " | " + freqList[i].char);
-    }
-    console.log("end");
 
     // constructing huffman tree
     freqList = freqList.sort((a, b) => a.freq - b.freq);
     tree = makeTree(freqList);
-
-    inOrder(tree);
 
     // constructing output
     out = freqList;
