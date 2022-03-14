@@ -1,7 +1,6 @@
 ///////////////////
 // imports
 ///////////////////
-import fs from 'fs';  // for reading from files 
 
 ///////////////////
 // globals
@@ -73,7 +72,7 @@ function makeTree(list) {
 // given a file, reads in and counts the frequencies of each character
 function countFreq(fileName) {
     let freqList;
-    fs.readFile(fileName, 'utf-8', (err, file) => {
+    readFile(fileName, 'utf-8', (err, file) => {
         if (err) { throw err; }  // check for error
         file = file.toString().sort();
         // check for 0 length file
@@ -106,6 +105,7 @@ function listToString(list) {
 
 // called by html button, computes and outputs huffman encoding
 function computeHC() {
+    console.log("computeHC");
     // get input from list1, list2
     let chars = document.getElementById("chars").value;
 
@@ -116,6 +116,7 @@ function computeHC() {
     }
 
     // sorting set
+    chars = chars.split('');
     chars = chars.sort();
 
     // constructing output
