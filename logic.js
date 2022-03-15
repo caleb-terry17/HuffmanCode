@@ -100,49 +100,83 @@ function getDepth(node) {
     return 1;
 }
 
+// expands tree to be a full binary tree with null nodes where needed
+function expandTree(tree) {
+    let queue = [tree];
+    let depth = getDepth(tree);  // depth of tree
+
+    // running breadth first search to create null nodes where needed
+    for (let level = 0; level < depth; ++level) {
+        // need to run through 2^level nodes
+        let numNodes = Math.pow(2, level);
+        for (let nodeNum = 0; nodeNum < numNodes - 1; ++nodeNum) {
+            // pop node, give it children, and push child nodes
+            let node = queue.shift();
+            // if char => give "null" children
+            if (node.char !== undefined || node.char === null) {
+                console.log("creating null node");
+                node.left = new Char(null, null);
+                node.right = new Char(null, null);
+            }
+            queue.push(node.left);
+            queue.push(node.right);
+        }
+    }
+    return tree;
+}
+
+// returns a string of the node, char, or null node
+function toStringNode(node) {
+    if (node.char === null) {  // null node
+        return "&nbsp;&nbsp;&nbsp;";
+    } else if (node.char !== undefined) {  // char
+        return node.freq + "-" + node.char;
+    } else {  // node
+        return "&nbsp;" + node.freq + "&nbsp;";
+    }
+}
+
 ///////////////////
 // i/o
 ///////////////////
 // draws a binary tree of the huffman encoding
-function drawTree(body, tree) {
-    // running breadth first search to get nodes
-    let node = tree;  // current node in the tree
-    let queue = [node];
+function drawTree(tag, tree) {
+    // expanding tree
+    tree = expandTree(tree);
+
     let depth = getDepth(tree);  // depth of tree
+
+    // creating array of strings to store each rows output
+    let pTags = [];
     for (let level = 0; level < depth; ++level) {
-        // need to run through 2^level nodes
-        let numNodes = Math.pow(2, level);
-        let currLevel = document.createElement('tr');  // current level of table
-        for (let levelNum = 0; levelNum < numNodes; ++levelNum) {
-            // pop node, output it and push child nodes
-            node = queue.shift();
-            // col entry for this node
-            let entry = document.createElement('td');
-            // if node is null, push two nulls
-            if (node === null) {
-                // editing col entry (null)
-                entry.innerHTML = "";
-                // pushing nodes to queue for bfs
-                queue.push(null);
-                queue.push(null);
-            } else if(node.char === undefined) {  // actual node, output and push children
-                // editing col entry (node)
-                entry.innerHTML = node.freq;
-                // pushing nodes to queue for bfs
-                queue.push(node.left);
-                queue.push(node.right);
-            } else {  // char, output and push nulls
-                // editing col entry (char)
-                entry.innerHTML = node.freq + " (" + node.char + ")";
-                // pushing nodes to queue for bfs
-                queue.push(null);
-                queue.push(null);
-            }
-            currLevel.appendChild(entry);
-        }
-        body.appendChild(currLevel);
+        pTags.push("");
     }
-    return body;
+
+    // runs an inorder traversal on tree adding spaces where needed
+    function inOrder(node, row) {
+        // check for end of loop
+        if (node.left !== undefined) {
+            // call left child
+            inOrder(node.left, row - 1);
+            // insert necessary data into pTags array (spaces and freq)
+            for (let r = 0; r < depth; ++r) {
+                pTags[r] = (r == row ? toStringNode(node) : "&nbsp;&nbsp;&nbsp;");
+            }
+            // call right child
+            inOrder(node.right, row - 1);
+        }
+    }
+
+    inOrder(tree, depth - 1);
+
+    // convert pTag strings to tags and append to div
+    for (let level = 0; level < depth; ++level) {
+        let pTag = document.createElement('p');
+        pTag.innerHTML = pTags[level];
+        tag.appendChild(pTag);
+    }
+    
+    return tag;
 }
 
 // converts a list into a nice string to output
@@ -171,29 +205,24 @@ function computeHC() {
     freqList = countFreq(chars);
 
     // constructing huffman tree
-    freqList = freqList.sort((a, b) => a.freq - b.freq);
+    freqList = freqList.sort((a, b) => a.freq - b.freq);  // sorting nodes in array by frequency
     tree = makeTree(freqList);
 
     // tags to hold huffman tree
-    let innerHTML = document.createElement('h3');
-    let canvas = document.createElement('table');
-    let tbody = document.createElement('tbody');
     let div = document.createElement('div');
-
-    innerHTML.innerHTML = `<h3>The corresponding Huffman Coding is:</h3>`;
-    
-    // constructing tree
-    tbody =  drawTree(tbody, tree);
-
-    // adding children tags to main div tag
-    canvas.appendChild(tbody);
-    div.appendChild(innerHTML);
-    div.appendChild(canvas);
+    let mainH3 = document.createElement('h3');
 
     // adding id to div tag
     div.id = "huffmanTable"
 
-    // removing div if div has already been attached
+    // adding main text to div 
+    mainH3.innerHTML = `<h3>The corresponding Huffman Coding is:</h3>`;  // "main text"
+    div.appendChild(mainH3);
+
+    // constructing tree
+    div =  drawTree(div, tree);
+
+    // if div has already been attached => remove div
     if (document.getElementById("huffmanTable") !== null) {
         hc.removeChild(document.getElementById("huffmanTable"));
     }
