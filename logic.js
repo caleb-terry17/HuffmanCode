@@ -2,6 +2,8 @@
 // imports
 ///////////////////
 
+// afekj;rajkg;lejk;akjfgja;ljaf;lejka;lk
+
 ///////////////////
 // globals
 ///////////////////
@@ -114,7 +116,6 @@ function expandTree(tree) {
             let node = queue.shift();
             // if char => give "null" children
             if (node.char !== undefined || node.char === null) {
-                console.log("creating null node");
                 node.left = new Char(null, null);
                 node.right = new Char(null, null);
             }
@@ -160,7 +161,7 @@ function drawTree(tag, tree) {
             inOrder(node.left, row - 1);
             // insert necessary data into pTags array (spaces and freq)
             for (let r = 0; r < depth; ++r) {
-                pTags[r] = (r == row ? toStringNode(node) : "&nbsp;&nbsp;&nbsp;");
+                pTags[r] += (r == row ? toStringNode(node) : "&nbsp;&nbsp;&nbsp;");
             }
             // call right child
             inOrder(node.right, row - 1);
@@ -170,8 +171,9 @@ function drawTree(tag, tree) {
     inOrder(tree, depth - 1);
 
     // convert pTag strings to tags and append to div
-    for (let level = 0; level < depth; ++level) {
+    for (let level = depth - 1; level >= 0; --level) {
         let pTag = document.createElement('p');
+        // console.log("i: " + level + " " + pTags[level]);
         pTag.innerHTML = pTags[level];
         tag.appendChild(pTag);
     }
@@ -203,6 +205,8 @@ function computeHC() {
 
     // getting frequencies of each character
     freqList = countFreq(chars);
+    
+    console.log(freqList.sort((a, b) => a.freq - b.freq));
 
     // constructing huffman tree
     freqList = freqList.sort((a, b) => a.freq - b.freq);  // sorting nodes in array by frequency
