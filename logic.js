@@ -111,11 +111,11 @@ function expandTree(tree) {
     for (let level = 0; level < depth; ++level) {
         // need to run through 2^level nodes
         let numNodes = Math.pow(2, level);
-        for (let nodeNum = 0; nodeNum < numNodes - 1; ++nodeNum) {
+        for (let nodeNum = 0; nodeNum < numNodes; ++nodeNum) {
             // pop node, give it children, and push child nodes
             let node = queue.shift();
             // if char => give "null" children
-            if (node.char !== undefined || node.char === null) {
+            if (node.left === undefined) {
                 node.left = new Char(null, null);
                 node.right = new Char(null, null);
             }
