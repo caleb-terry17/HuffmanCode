@@ -177,7 +177,7 @@ function computeHC() {
     // tags to hold huffman tree
     let innerHTML = document.createElement('h3');
     let canvas = document.createElement('table');
-    let tbody = document.createElement('tobdy');
+    let tbody = document.createElement('tbody');
     let div = document.createElement('div');
 
     innerHTML.innerHTML = `<h3>The corresponding Huffman Coding is:</h3>`;
