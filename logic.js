@@ -128,12 +128,20 @@ function expandTree(tree) {
 
 // returns a string of the node, char, or null node
 function toStringNode(node) {
+    let space = "&nbsp;";
+
+    // returns a string of the string padded with appropriate whitespace
+    function padStr(str) {
+        let len = str.length;
+        return space.repeat(Math.ceil((5 - len) / 2)) + str + space.repeat(Math.floor((5 - len) / 2));
+    }
+
     if (node.char === null) {  // null node
-        return "&nbsp;&nbsp;&nbsp;";
+        return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
     } else if (node.char !== undefined) {  // char
-        return node.freq + "-" + node.char;
+        return padStr(node.freq + "-" + node.char);
     } else {  // node
-        return "&nbsp;" + node.freq + "&nbsp;";
+        return padStr(node.freq + "");
     }
 }
 
@@ -161,7 +169,7 @@ function drawTree(tag, tree) {
             inOrder(node.left, row - 1);
             // insert necessary data into pTags array (spaces and freq)
             for (let r = 0; r < depth; ++r) {
-                pTags[r] += (r == row ? toStringNode(node) : "&nbsp;&nbsp;&nbsp;");
+                pTags[r] += (r == row ? toStringNode(node) : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
             }
             // call right child
             inOrder(node.right, row - 1);
@@ -173,7 +181,6 @@ function drawTree(tag, tree) {
     // convert pTag strings to tags and append to div
     for (let level = depth - 1; level >= 0; --level) {
         let pTag = document.createElement('p');
-        // console.log("i: " + level + " " + pTags[level]);
         pTag.innerHTML = pTags[level];
         tag.appendChild(pTag);
     }
@@ -181,15 +188,24 @@ function drawTree(tag, tree) {
     return tag;
 }
 
-// converts a list into a nice string to output
-function listToString(list) {
-    let len = list.length;
-    let str = "";
-    for (let i = 0; i < len; ++i) {
-        str += list[i];
-        str += (i < len - 1) ? ", " : "";
+// outputs huffman encoding for tree given
+function addEncoding(div, node) {
+    function traverse(node, encoding) {
+        // output encoding if char
+        if (node.char !== undefined) {
+            // add current encoding to div
+            let tag = document.createElement('p');
+            tag.innerHTML = node.char + " " + encoding;
+            div.appendChild(tag);
+        } else {  // char is end of tree => otherwise traverse child nodes
+            traverse(node.left, encoding + "0");  // left adds 0
+            traverse(node.right, encoding + "1");  // right adds 1
+        }
     }
-    return str;
+    
+    traverse(node, "");
+
+    return div;
 }
 
 // called by html button, computes and outputs huffman encoding
@@ -206,22 +222,28 @@ function computeHC() {
     // getting frequencies of each character
     freqList = countFreq(chars);
     
-    console.log(freqList.sort((a, b) => a.freq - b.freq));
-
     // constructing huffman tree
     freqList = freqList.sort((a, b) => a.freq - b.freq);  // sorting nodes in array by frequency
     tree = makeTree(freqList);
 
     // tags to hold huffman tree
     let div = document.createElement('div');
-    let mainH3 = document.createElement('h3');
+    let h3Tree = document.createElement('h3');
+    let h3Encoding = document.createElement('h3');
 
     // adding id to div tag
     div.id = "huffmanTable"
 
+    // adding encoding text to div
+    h3Encoding.innerHTML = "The Huffman Encoding is:";
+    div.appendChild(h3Encoding);
+
+    // adding huffman encoding to div tag
+    div = addEncoding(div, tree);
+
     // adding main text to div 
-    mainH3.innerHTML = `<h3>The corresponding Huffman Coding is:</h3>`;  // "main text"
-    div.appendChild(mainH3);
+    h3Tree.innerHTML = "The corresponding Huffman Tree is:";  // "main text"
+    div.appendChild(h3Tree);
 
     // constructing tree
     div =  drawTree(div, tree);
