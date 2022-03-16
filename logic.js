@@ -242,7 +242,7 @@ function computeHC() {
     div = addEncoding(div, tree);
 
     // adding main text to div 
-    h3Tree.innerHTML = "The corresponding Huffman Tree is:";  // "main text"
+    h3Tree.innerHTML = "The corresponding Huffman Tree is (warning: tree levels may wrap):";  // "main text"
     div.appendChild(h3Tree);
 
     // constructing tree
